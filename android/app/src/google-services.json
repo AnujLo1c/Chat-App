@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "49267865189",
+    "project_id": "whatstachat",
+    "storage_bucket": "whatstachat.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:49267865189:android:a43cdfc41579f3a332388c",
+        "android_client_info": {
+          "package_name": "com.anujApps.whatstachat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "49267865189-jfmggr09aobc5o3n9cmdsdg9uua6kp65.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.anujApps.whatstachat",
+            "certificate_hash": "9d28fd2635c0f159b27017b0d907e616bed2d172"
+          }
+        },
+        {
+          "client_id": "49267865189-jkj1jacvps5d8rap2jb44agntu6rgsjm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBTzpy8wBh20LXzSxozWEVFGfJWOsgu_Pc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "49267865189-jkj1jacvps5d8rap2jb44agntu6rgsjm.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "49267865189-6ru7u2me82dnu1u4oe2dsq1mv1md6qlg.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.whatstaChat"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
