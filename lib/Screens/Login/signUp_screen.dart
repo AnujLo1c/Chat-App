@@ -118,7 +118,7 @@ class SignupScreen extends StatelessWidget {
                       print('Nickname: ${controller.nicknameController.text}');
                       print('Email: ${controller.emailController.text}');
                       print('Password: ${controller.passwordController.text}');
-if(await EmailPassLoginAl().signUpAL(context, controller.emailController.text, controller.passwordController.text)){
+if(await EmailPassLoginAl().signUpAL( controller.emailController.text, controller.passwordController.text)){
   print("here");
   String profileUrl=await CloudStorage().uploadImageAL(controller.image.value,controller.emailController.text);
   if(profileUrl=="" || profileUrl.isEmpty){

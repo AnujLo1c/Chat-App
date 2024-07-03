@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:whatsta_chat/Controllers/Login_Controller/forget_pass_controller.dart';
 import 'package:whatsta_chat/Firebase/email_pass_login.dart';
+
 class ForgetpasswordScreen extends StatelessWidget {
    ForgetpasswordScreen({super.key});
 
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final TextEditingController _emailController = TextEditingController();
-
   @override
   Widget build(BuildContext context) {
+    final ForgetPassController forgetPassController=Get.put(ForgetPassController());
     return Scaffold(
       appBar: AppBar(
         title: Text('Forget Password'),
@@ -17,11 +17,11 @@ class ForgetpasswordScreen extends StatelessWidget {
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
-          key: _formKey,
+          key: forgetPassController.formKey,
           child: Column(
             children: <Widget>[
               TextFormField(
-                controller: _emailController,
+                controller: forgetPassController.emailController,
                 decoration: InputDecoration(labelText: 'Email'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -34,15 +34,7 @@ class ForgetpasswordScreen extends StatelessWidget {
               SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () {
-                  if (_formKey.currentState!.validate()) {
-                    final email = _emailController.text;
-                    if(EmailPassLoginAl().resetPasswordAL(email, context)){
-                      print("Reset email send.");
-                    }
-                    else{
-                      print("Some error occured");
-                    }
-                  }
+                  forgetPassController.resetPass();
                 },
                 child: Text('Send Reset Email'),
               ),

@@ -1,61 +1,17 @@
-import 'dart:async';
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:whatsta_chat/Controllers/Login_Controller/verify_email_controller.dart';
 import 'package:whatsta_chat/Firebase/email_pass_login.dart';
 
-class EmailVerificationScreen extends StatefulWidget {
+class EmailVerificationScreen extends StatelessWidget {
   const EmailVerificationScreen({Key? key}) : super(key: key);
 
   @override
-  State<EmailVerificationScreen> createState() =>
-      _EmailVerificationScreenState();
-}
-
-class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
-  // String email=Get.arguments;
-  bool isEmailVerified = false;
-  Timer? timer;
-  FirebaseAuth fa=FirebaseAuth.instance;
-  @override
-  void initState() {
-// TODO: implement initState
-    isEmailVerified = false;
-    super.initState();
-    fa.currentUser?.sendEmailVerification();
-    timer =
-        Timer.periodic(const Duration(seconds: 3), (_) => checkEmailVerified());
-  }
-
-  checkEmailVerified() async {
-    // Check if currentUser is not null before reloading
-    if (fa.currentUser != null) {
-      await fa.currentUser!.reload();
-
-      setState(() {
-        isEmailVerified = fa.currentUser!.emailVerified;
-      });
-
-      if (isEmailVerified) {
-        ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text("Email Successfully Verified")));
-        Get.until((route) => route.settings.name == "/login");
-        timer?.cancel();
-      }
-    }
-  }
-
-  @override
-  void dispose() {
-    timer?.cancel();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
+    final VerifyEmailController verifyEmailController=Get.put(VerifyEmailController());
     return PopScope(
       canPop: true,
       onPopInvoked: (didPop) {
@@ -81,7 +37,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                   padding: const EdgeInsets.symmetric(horizontal: 32.0),
                   child: Center(
                     child: Text(
-                      'We have sent you a Email on ${fa.currentUser?.email}',
+                      'We have sent you a Email on ${verifyEmailController.fa.currentUser?.email}',
                       textAlign: TextAlign.center,
                     ),
                   ),
@@ -113,12 +69,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                               BorderRadius.all(Radius.circular(5)))),
                       child: const Text('Cancel',style: TextStyle(fontSize: 16),),
                       onPressed: () {
-                        try {
-                          fa.currentUser?.delete();
-                          Navigator.pop(context);
-                        } catch (e) {
-                          debugPrint('$e');
-                        }
+                        verifyEmailController.cancelOp();
                       },
                     ),
                     Gap(10),
@@ -135,12 +86,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                         style: TextStyle(fontSize: 16),
                       ),
                       onPressed: () {
-                        try {
-                          fa.currentUser
-                              ?.sendEmailVerification();
-                        } catch (e) {
-                          debugPrint('$e');
-                        }
+                        verifyEmailController.resendEmail();
                       },
                     ),
                   ],

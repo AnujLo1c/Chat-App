@@ -1,14 +1,19 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:email_validator/email_validator.dart';
 import 'package:get/get.dart';
+import 'package:whatsta_chat/Widgets/snackbarAL.dart';
 
 class EmailPassLoginAl {
   final _auth = FirebaseAuth.instance;
-  loginInAL(BuildContext context, String email, String password) async {
+  FirebaseAuth get authUser=>_auth;
+  loginInAL( String email, String password) async {
     try {
+
       if (!validateEmailAL(email)) {
-        showSnackbarAL("Email badly formatted.", context);
+        // showSuccessSnackbar("Email badly formatted.");
+        showErrorSnackbar("Email badly formatted.");
         return false;
       }
 
@@ -19,58 +24,60 @@ class EmailPassLoginAl {
       }
       print(
           "!_auth.currentUser!.emailVerified ${!_auth.currentUser!.emailVerified}");
-      showSnackbarAL("Login successful.", context);
+      showSuccessSnackbar("Login successful.");
 
       return true;
     } on FirebaseAuthException catch (e) {
       print(e.code);
       if (e.code == 'invalid-credential') {
-        showSnackbarAL("No User Found for that Email and Password.", context);
+        showErrorSnackbar("No User Found for that Email and Password.");
       } else {
-        showSnackbarAL(e.message.toString(), context);
+        showErrorSnackbar(e.message.toString());
       }
       return false;
       // Navigator.pop(context);
     } catch (e) {
-      showSnackbarAL(e.toString(), context);
+      showErrorSnackbar(e.toString());
       return false;
     }
   }
 
-  signUpAL(BuildContext context, String email, String password) async {
+  signUpAL( String email, String password) async {
     try {
       if (!validateEmailAL(email)) {
-        showSnackbarAL("Email badly formatted.", context);
+        showErrorSnackbar("Email badly formatted.");
         return false;
       }
       await FirebaseAuth.instance
           .createUserWithEmailAndPassword(email: email, password: password);
-      showSnackbarAL("Account created successful.", context);
+      showSuccessSnackbar("Account created successful.");
       return true;
     } on FirebaseAuthException catch (e) {
       if (e.code == "email-already-in-use") {
-        showSnackbarAL("Account with this email Already exists", context);
+        showErrorSnackbar("Account with this email Already exists");
         Get.toNamed("/email_verify", arguments: email);
       } else if (e.code == 'weak-password') {
-        showSnackbarAL("Password Provided is too Weak", context);
+        showErrorSnackbar("Password Provided is too Weak");
       } else {
-        showSnackbarAL(e.message.toString(), context);
+        showErrorSnackbar(e.message.toString());
       }
       return false;
     } catch (e) {
-      showSnackbarAL(e.toString(), context);
+      showErrorSnackbar(e.toString());
       return false;
     }
   }
 
-  resetPasswordAL(String email, BuildContext context) async {
+  resetPasswordAL(String email) async {
     try {
       await _auth.sendPasswordResetEmail(email: email);
-      showSnackbarAL("Password Reset Email has been sent !", context);
+      showSuccessSnackbar("Password Reset Email has been sent !");
+
       return true;
     } on FirebaseAuthException catch (e) {
       if (e.code == "user-not-found") {
-        showSnackbarAL("No user found for that email.", context);
+        showSuccessSnackbar("No user found for that email.");
+
       }
       return false;
     }
@@ -81,14 +88,15 @@ class EmailPassLoginAl {
       User? user = _auth.currentUser;
       if (user != null) {
         await user.delete();
-        print('User deleted successfully');
+        showSuccessSnackbar('User deleted successfully');
         return true;
       } else {
-        print('No user is currently signed in');
+        showSuccessSnackbar('No user is currently signed in');
         return false;
       }
     } catch (e) {
-      print('Failed to delete user: $e');
+        showSuccessSnackbar('Failed to delete user: $e');
+
       return false;
     }
   }
@@ -96,9 +104,13 @@ class EmailPassLoginAl {
   Future<bool> signOut() async {
     try {
       await _auth.signOut();
+
+        showSuccessSnackbar('Signout Successfully');
       return true;
     } catch (e) {
-      print("signout failded");
+
+        showSuccessSnackbar('Signout Failed');
+      // print("signout failded");
       return false;
     }
   }
@@ -121,7 +133,7 @@ class EmailPassLoginAl {
 //        bool isEmailVerifiedAL = FirebaseAuth.instance.currentUser!.emailVerified;
 //
 //       if (isEmailVerifiedAL) {
-//         showSnackbarAL("Email Successfully Verified", context);
+//         showSuccessSnackbar("Email Successfully Verified");
 //
 //        return true;
 //       }
@@ -130,13 +142,7 @@ class EmailPassLoginAl {
 //   }
   ///////////////////////////////////////////// Validation ////////////////////////////////////////////////////
 
-  showSnackbarAL(String message, BuildContext context) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(
-      message,
-      style: const TextStyle(fontSize: 18.0),
-    )));
-  }
+  
 
   validateEmailAL(String email) {
     if (EmailValidator.validate(email)) {
