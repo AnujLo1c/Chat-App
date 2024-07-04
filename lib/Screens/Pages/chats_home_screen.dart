@@ -21,16 +21,13 @@ class ChatsHomeScreen extends StatelessWidget {
             .where("participants", arrayContains: currentUser)
             .snapshots(),
         builder: (context, snapshot) {
-          print("Snapshot state: ${snapshot.connectionState}");
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
-            print("Snapshot error: ${snapshot.error}");
             return Center(child: Text('Error: ${snapshot.error}'));
           } else if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
             return const Center(child: Text('No chatrooms found.'));
           } else {
-            print("Snapshot data: ${snapshot.data?.docs.map((doc) => doc.data())}");
             return ListView.builder(
               itemCount: snapshot.data!.docs.length,
               itemBuilder: (context, index) {

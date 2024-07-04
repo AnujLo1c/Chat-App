@@ -104,7 +104,6 @@ class EmailPassLoginAl {
   Future<bool> signOut() async {
     try {
       await _auth.signOut();
-
         showSuccessSnackbar('Signout Successfully');
       return true;
     } catch (e) {

@@ -1,74 +1,90 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:whatsta_chat/Controllers/Pages_Controller/user_profile_controller.dart';
+import 'package:whatsta_chat/UiHelper/profile_widgets.dart';
 import 'package:gap/gap.dart';
-import 'package:google_fonts/google_fonts.dart';
-
-import '../../Widgets/appBarAL.dart';
 
 class UserProfile extends StatelessWidget {
   const UserProfile({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-        child: Scaffold(
-          appBar: appBarAl(title: "Profile"),
-body: FutureBuilder(
-    future: FirebaseFirestore.instance.collection("users").doc("anujlowanshi3@gmail.com").get(),
-    builder: (BuildContext context, AsyncSnapshot snapshot) {
-    if (snapshot.connectionState == ConnectionState.waiting) {
-    return const Center(
-    child: CircularProgressIndicator(
-    color: Colors.blue,
-    )
-    );
-    } else if (snapshot.hasError) {
-    return Text(
-    'Error: ${snapshot.error}',
-    );
-    } else {
-    return SingleChildScrollView(
-    scrollDirection: Axis.vertical,
-    child: Column(
-    crossAxisAlignment: CrossAxisAlignment.center,
-    children: [
-    const Gap(20),
+    UserProfileController userProfileController = Get.put(UserProfileController());
+    Size size = MediaQuery.of(context).size;
 
-    Center(
-    child: Column(
-      children: [
-        ClipOval(
-        child: CachedNetworkImage(
-        fit: BoxFit.fill,
-        height: 150,
-        width: 150,
-        imageUrl: snapshot.data?["downloadProfileUrl"],
-        placeholder: (context, url) =>
-        const CircularProgressIndicator(),
-        errorWidget: (context, url, error) => const CircleAvatar(
-        foregroundColor: Colors.white,
-        backgroundColor: Colors.blue,
-        radius: 100,
-        child: Icon(
-        Icons.person,
-        size: 90,
-        ),
-        ),
-        ),
-        ),
-        Gap(10),
-        Text(snapshot.data?["nickName"],style: TextStyle(fontSize: 22),)
-      ],
-    ),
-    ),
-        ])
-    );
-  }
-}
-    )
-    )
+    return SafeArea(
+      child: Scaffold(
+        body: SingleChildScrollView(
+            scrollDirection: Axis.vertical,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const Gap(20),
+                Center(
+                  child: Obx((){
+
+                    return Column(
+                      children: [
+                        const Text("Profile"),
+                        const Gap(20),
+                        ClipOval(
+                          child: CachedNetworkImage(
+                            fit: BoxFit.fill,
+                            height: 150,
+                            width: 150,
+                            imageUrl: userProfileController.downloadProfileUrl
+                                .value,
+                            placeholder: (context, url) =>
+                            const CircularProgressIndicator(),
+                            errorWidget: (context, url, error) =>
+                            const CircleAvatar(
+                              foregroundColor: Colors.white,
+                              backgroundColor: Colors.blue,
+                              radius: 100,
+                              child: Icon(
+                                Icons.person,
+                                size: 90,
+                              ),
+                            ),
+                          ),
+                        ),
+                        const Gap(10),
+                        Text(
+                          userProfileController.nickName.value,
+                          style: const TextStyle(fontSize: 22),
+                        ),
+                      ],
+                    );
+                  }
+                  ),
+                ),
+                const Gap(40),
+                Container(
+                  height: size.height / 2,
+                  child: ListView(
+                    padding: const EdgeInsets.all(15),
+                    children: [
+                      ProfileWidgets().buildProfileOption(size, Icons.edit, "Edit", () {
+                        Get.toNamed("/edit_screen");
+                      }),
+                      const Gap(10),
+                      ProfileWidgets().buildProfileOption(size, Icons.settings, "Settings", () {
+                        Get.toNamed("/settings");
+                      }),
+                      const Gap(10),
+                      ProfileWidgets().buildProfileOption(size, Icons.logout, "Log-out", () {
+                        Get.offNamedUntil("/login", (route) => route.settings.name == "/login");
+                      }),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          )
+
+      )
     );
   }
 }
